@@ -1,0 +1,16 @@
+{
+  "name": "instamsg-js",
+  "version": "0.0.0",
+  "homepage": "https://github.com/InstaMsg/instamsg-js",
+  "authors": [
+    "gsachan <gsachan@sensegrow.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
