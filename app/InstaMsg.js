@@ -22,7 +22,7 @@ instamsg.InstaMsg = function (clientId, authKey, connectHandler, disConnectHandl
     options.clientId = clientId.substring(0, 23);
     options.userName = clientId.substring(24, 36);
     options.password = authKey;
-    instamsg.version='beta';
+    instamsg.version = 'beta';
     instamsg.handlersMap = {}
     instamsg.replyHandlerMap = {}
     var filesTopic = "instamsg/clients/" + clientId + "/files";
@@ -33,65 +33,81 @@ instamsg.InstaMsg = function (clientId, authKey, connectHandler, disConnectHandl
     instamsg.resultHandler = [];
     var onMessageArrived = function (msg) {
         var topic = msg._getDestinationName()
-        if(topic  === null || topic === undefined) {
+        if (topic === null || topic === undefined) {
             throw new Error("Invalid topic");
         }
-        console.log("message Arrived.");
+        console.log("message Arrived : "+msg.payloadString);
         switch (topic) {
             case filesTopic:
-                var json = JSON.parse(msg.payloadString);
+                try {
+                    var json = JSON.parse(msg.payloadString);
                     if (instamsg.fileHandlers[topic]) {
-                        var message = new instamsg.Message(json.message,{id:json.message_id,topic:json.topic,reply_to:json.reply_to})
+                        var message = new instamsg.Message(json.body, {id: json.message_id, topic: json.topic, replyTopic: json.reply_to})
                         instamsg.fileHandlers[topic](message)
                     } else {
-                        throw new Error("No Handler is register for " +topic);
+                        throw new Error("No Handler is register for " + topic);
                     }
+                }
+                catch (e) {
+                }
                 break;
             case sendMsgReplyTopic:
-                var json = JSON.parse(msg.payloadString);
-                console.log(json)
-                var messageId = json.message_id;
-                var responseId = json.response_id;
-                if (responseId) {
-                    if (oneToOneMessageHandler) {
-                        var message = new instamsg.Message(json.message,{id:json.message_id,topic:json.topic,reply_to:json.reply_to})
-                        oneToOneMessageHandler(message)
+                try {
+                    var json = JSON.parse(msg.payloadString);
+                    console.log(json)
+                    var messageId = json.message_id;
+                    var responseId = json.response_id;
+                    if (responseId) {
+                        if (instamsg.handlersMap[responseId]) {
+                            var message = new instamsg.Message(json.body, {id: json.message_id, topic: json.topic, replyTopic: json.reply_to})
+                            instamsg.replyHandlerMap[responseId](message)
+                        }
+                    } else {
+                        if (oneToOneMessageHandler) {
+                            var message = new instamsg.Message(json.body, {id: json.message_id, topic: json.topic, replyTopic: json.reply_to})
+                            oneToOneMessageHandler(message)
+                        }
                     }
-                } else {
+                }
+                catch (e) {
                     if (instamsg.handlersMap[topic]) {
-                        var message = new instamsg.Message(json.message,{id:json.message_id,topic:json.topic,reply_to:json.reply_to})
-                        instamsg.handlersMap[topic](message)
+                        instamsg.handlersMap[topic](new instamsg.Message(msg.payloadString))
                     }
                 }
                 break;
             default:
-                if (instamsg.handlersMap[topic]) {
-                    instamsg.handlersMap[topic](new instamsg.Message(msg.payloadString))
-                } else {
-                    throw new Error("No Handler is register for " +topic);
+                try {
+                    if (instamsg.handlersMap[topic]) {
+                        instamsg.handlersMap[topic](new instamsg.Message(msg.payloadString))
+                    } else {
+                        throw new Error("No Handler is register for " + topic);
+                    }
+                }
+                catch (e) {
                 }
                 break;
         }
     };
 
-    var connection = instamsg.ConnectionFactory(connectHandler,onMessageArrived,disConnectHandler,options);
+    var connection = instamsg.ConnectionFactory(connectHandler, onMessageArrived, disConnectHandler, options);
 
     instamsg.close = function () {
         connection.close();
     };
 
-    instamsg.publish = function (topic, message,qos,dup,resultHandler,timeout) {
-        var id = UUIDjs.create(4).toString()
-        instamsg.resultHandler[id] = resultHandler;
-        connection.publish(id,topic, message,qos,dup,onPublish,timeout);
-    };
-
-    var onPublish =function(msg){
-        if(instamsg.resultHandler[msg.id]){
-            instamsg.resultHandler[msg.id](instamsg.Result.init(msg,true))
+    var onPublish = function (msg) {
+        if (instamsg.resultHandler[msg.id]) {
+            instamsg.resultHandler[msg.id](instamsg.Result.init(msg, true))
         }
     }
-    instamsg.subscribe = function (topic, qos,msgHandler,resultHandler,timeout) {
+
+    instamsg.publish = function (topic, message, qos, dup, resultHandler, timeout) {
+        var id = UUIDjs.create(4).toString()
+        instamsg.resultHandler[id] = resultHandler;
+        connection.publish(id, topic, message, qos, dup, onPublish, timeout);
+    };
+
+    instamsg.subscribe = function (topic, qos, msgHandler, resultHandler, timeout) {
         if (topic.length < 1) {
             console.log("Topic cannot be empty");
             throw new Error("Topic cannot be empty ");
@@ -104,56 +120,56 @@ instamsg.InstaMsg = function (clientId, authKey, connectHandler, disConnectHandl
         subscriptionobj.topic = topic;
         subscriptionobj.msgHandler = msgHandler;
         subscriptionobj.resultHandler = resultHandler;
-        connection.subscribe(topic, subscriptionobj, qos,onSubscribeSuccess, onSubscribeFailure);
+        connection.subscribe(topic, subscriptionobj, qos, onSubscribeSuccess, onSubscribeFailure);
     };
 
     var onSubscribeSuccess = function (subscriptionobj) {
         instamsg.handlersMap[subscriptionobj.invocationContext.topic] = subscriptionobj.invocationContext.msgHandler;
         console.log(instamsg.handlersMap)
-            var  result=  "Client Subscribe to " + subscriptionobj.invocationContext.topic
-        subscriptionobj.invocationContext.resultHandler(instamsg.Result.init(result,true))
+        var result = "Client Subscribe to " + subscriptionobj.invocationContext.topic
+        subscriptionobj.invocationContext.resultHandler(instamsg.Result.init(result, true))
     }
 
     var onSubscribeFailure = function (subscriptionobj) {
-        console.log("unable to suscribe to " +subscriptionobj.invocationContext.topic)
-          var  result= "Client unable to Subscribe to " + subscriptionobj.invocationContext.topic
-        subscriptionobj.invocationContext.resultHandler(instamsg.Result.init(subscriptionobj,false))
+        console.log("unable to suscribe to " + subscriptionobj.invocationContext.topic)
+        var result = "Client unable to Subscribe to " + subscriptionobj.invocationContext.topic
+        subscriptionobj.invocationContext.resultHandler(instamsg.Result.init(subscriptionobj, false))
     }
 
-    instamsg.unsubscribe = function (topic,msgHandler) {
+    instamsg.unsubscribe = function (topic, msgHandler) {
         if (instamsg.handlersMap[topic] === undefined) {
             console.log('You are not subscribed to this topic');
             throw new Error('You are not subscribed to this topic');
         }
-        connection.unsubscribe(topic, {topic:topic,resultHandler:msgHandler},onUnsubscribeSuccess, onUnsubscribeFailure)
+        connection.unsubscribe(topic, {topic: topic, resultHandler: msgHandler}, onUnsubscribeSuccess, onUnsubscribeFailure)
     };
 
     var onUnsubscribeSuccess = function (object) {
-        console.log("unsubscribed to "+object.invocationContext.topic)
+        console.log("unsubscribed to " + object.invocationContext.topic)
         delete instamsg.handlersMap[object.invocationContext.topic];
-          var  result= "Client unsubscribe from " + object.invocationContext.topic
-        object.invocationContext.resultHandler(instamsg.Result.init(result,true))
+        var result = "Client unsubscribe from " + object.invocationContext.topic
+        object.invocationContext.resultHandler(instamsg.Result.init(result, true))
     }
 
     var onUnsubscribeFailure = function (object) {
-        console.log("Not able to unsubscribe to "+object.invocationContext.topic)
-        object.invocationContext.resultHandler(instamsg.Result.init(object,false))
+        console.log("Not able to unsubscribe to " + object.invocationContext.topic)
+        object.invocationContext.resultHandler(instamsg.Result.init(object, false))
     }
 
-    instamsg.send = function (clientId, msg, qos,replyHandler, timeout) {
+    instamsg.send = function (clientId, msg, qos, replyHandler, timeout) {
         var messageId = UUIDjs.create(4).toString()
         instamsg.replyHandlerMap[messageId] = replyHandler;
         var message = {
             message_id: messageId,
             topic: clientId,
             reply_to: sendMsgReplyTopic,
-            message: msg,
+            body: msg,
             status: 1
         }
-        connection.send(clientId, message,qos, timeout);
+        connection.send(clientId, message, qos, timeout);
     };
 
-    instamsg.setFileReceiveHander = function (resultHandler,timeout) {
+    instamsg.setFileReceiveHander = function (resultHandler, timeout) {
 
     };
 
@@ -161,28 +177,28 @@ instamsg.InstaMsg = function (clientId, authKey, connectHandler, disConnectHandl
         var messageId = UUIDjs.create(4).toString()
         instamsg.fileHandlers[messageId] = resultHandler;
         var message = {
-            messageId:messageId,
-            replyTo:filesTopic,
-            method:"DELETE",
-            filename:fileName
+            messageId: messageId,
+            replyTo: filesTopic,
+            method: "DELETE",
+            filename: fileName
         }
-        connection.send("instamsg/clients/" + clientId + "/files", message,1, timeout);
+        connection.send("instamsg/clients/" + clientId + "/files", message, 1, timeout);
 
     };
 
-    instamsg.reply = function (content, msg,replyHandler, timeout) {
-        if(!instamsg.replyHandlerMap[msg.id()]){
+    instamsg.reply = function (content, msg,qos, replyHandler,resulthandler, timeout) {
+        if (!instamsg.replyHandlerMap[msg.id()]) {
             instamsg.replyHandlerMap[msg.id()] = replyHandler;
         }
         var message = {
             message_id: msg.id(),
             response_id: msg.id(),
             topic: msg.replyTopic(),
-            reply_to:msg.topic(),
-            message: content,
+            reply_to: msg.topic(),
+            body: content,
             status: 1
         }
-        connection.send(msg.replyTopic(), message,msg.qos(), replyHandler, timeout);
+        connection.send(msg.replyTopic(), message, qos, resulthandler, timeout);
     };
     return instamsg;
 }

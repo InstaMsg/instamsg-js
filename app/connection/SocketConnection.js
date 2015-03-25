@@ -12,7 +12,7 @@ instamsg.SocketConnection.connection = function (onOpenHandler, onMsgHandler, on
     instamsg.SocketConnection.host = 'localhost';
     instamsg.SocketConnection.httpPort = 11883;
     instamsg.SocketConnection.httpsPort = 18883;
-    instamsg.SocketConnection.port = options.enabledSsl ? self.httpsPort : self.httpPort;
+    instamsg.SocketConnection.port = options.enableSsl ? self.httpsPort : self.httpPort;
     instamsg.SocketConnection.client = new Paho.MQTT.Client(instamsg.SocketConnection.host, Number(instamsg.SocketConnection.port), options.clientId);
 
     instamsg.SocketConnection.client.onMessageArrived = onMsgHandler;
@@ -36,7 +36,7 @@ instamsg.SocketConnection.connection = function (onOpenHandler, onMsgHandler, on
         instamsg.SocketConnection.client.send(message);
     }
 
-    instamsg.SocketConnection.send = function (clientId,msg,qos, timeout) {
+    instamsg.SocketConnection.send = function (clientId,msg,qos,resultHandler, timeout) {
         if (!instamsg.SocketConnection.client.isConnected()) {
             console.log('InstaMsg socket is not connected.');
             return false;
@@ -64,9 +64,13 @@ instamsg.SocketConnection.connection = function (onOpenHandler, onMsgHandler, on
         console.log("error: " + message.errorMessage);
     }
 
-    var onFailure = function () {
-        console.log("Not able to connect to InstaMsg socket.")
+    var onConnect = function (result) {
+        onOpenHandler(instamsg.Result.init("Connect to InstaMsg socket.", true))
     }
+    var onFailure = function (result) {
+        onOpenHandler(instamsg.Result.init(result.errorMessage, false))
+    }
+
 
     instamsg.SocketConnection.subscribe = function (topic, invocationContext,qos,onSubscribeSuccess,onSubscribeFailure,timeout) {
         if (!instamsg.SocketConnection.client.isConnected()) {
@@ -108,7 +112,7 @@ instamsg.SocketConnection.connection = function (onOpenHandler, onMsgHandler, on
         cleanSession: true,
         useSSL: options.enableSsl ? true : false,
         invocationContext: instamsg,
-        onSuccess: onOpenHandler,
+        onSuccess: onConnect,
         onFailure: onFailure,
         mqttVersion: 3
     }
