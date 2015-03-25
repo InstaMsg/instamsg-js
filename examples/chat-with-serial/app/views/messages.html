@@ -1,4 +1,4 @@
-<div id="chat_window_1" style="margin-left:10px;" data-ng-controller="msgCtrl">
+<div id="chat_window_1" data-ng-show ='partner' data-ng-controller="msgCtrl">
     <div class="col-xs-12 col-md-12">
         <div class="panel panel-default">
             <button type="button" class="btn btn-primary btn-block">
@@ -27,7 +27,7 @@
                     <input id="btn-input" type="text" class="form-control input-sm chat_input"
                            placeholder="Write your message here..." data-ng-model="data"/>
                         <span class="input-group-btn">
-                        <button type="submit" class="btn btn-success" data-ng-disabled="!partner"
+                        <button type="submit" class="btn btn-success" data-ng-disabled="!data"
                                 data-ng-click="msgReply(data)">Send
                         </button>
                         </span>

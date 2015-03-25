@@ -3520,8 +3520,6 @@ instamsg.InstaMsg = function (clientId, authKey, connectHandler, disConnectHandl
         if (topic === null || topic === undefined) {
             throw new Error("Invalid topic");
         }
-        console.log("message Arrived : "+msg.payloadString);
-        console.log(topic)
         switch (topic) {
             case filesTopic:
                 try {
@@ -3832,7 +3830,6 @@ instamsg.SocketConnection.connection = function (onOpenHandler, onMsgHandler, on
         message.qos = qos;
         message.retained = true;
         message.destinationName = clientId;
-        console.log("sending " + payload)
         instamsg.SocketConnection.client.onMessageDelivered = resultHandler;
         instamsg.SocketConnection.client.send(message);
     }

@@ -8,42 +8,6 @@
  * Controller of the chatWithSerialApp
  */
 angular.module('chatWithSerialApp')
-//    .directive('addMsg', ['$rootScope', '$compile', function ($root, $compile) {
-//        var receivedMsg = '<div class="row msg_container base_receive"><div class="col-md-2 col-xs-2 avatar"><img src="http://www.bitrebels.com/wp-content/uploads/2011/02/Original-Facebook-Geek-Profile-Avatar-1.jpg" class=" img-responsive "> </div><div class="messages msg_receive"><p>{{content.msg}}</p><time datetime="2009-11-13T20:00">Timothy • 51 min</time></div></div>';
-//        var sentMsg = '<div class="row msg_container base_sent"><div class="messages msg_sent"><p>{{content.msg}}</p> <time datetime="2009-11-13T20:00">Timothy • 51 min</time></div><div class="col-md-2 col-xs-2 avatar"><img src="http://www.bitrebels.com/wp-content/uploads/2011/02/Original-Facebook-Geek-Profile-Avatar-1.jpg" class=" img-responsive "></div></div>';
-//
-//        var getTemplate = function(contentType) {
-//            var template = '';
-//
-//            switch(contentType) {
-//                case 'received':
-//                    template = receivedMsg;
-//                    break;
-//                case 'sent':
-//                    template = sentMsg;
-//                    break;
-//            }
-//            return template;
-//        }
-//
-//        var linker = function(scope, element, attrs) {
-//            scope.$parent.$watch(scope.content, function(_new, _old) {
-//                console.log(_new)
-//                console.log(_old)
-//                })
-//            element.html(getTemplate(scope.content.content_type)).show();
-//
-//            $compile(element.contents())(scope);
-//        }
-//
-//        return {
-////            restrict: "E",
-//            link: linker,
-//            scope: {
-//                content:'='
-//            }
-//        };
-//}])
     .factory('Connection', function ($rootScope) {
         var connectHandler = function (result) {
             if (result.succeeded()) {
@@ -101,7 +65,7 @@ angular.module('chatWithSerialApp')
         $scope.closeConnection = function () {
             $rootScope.instaMsg.close()
         }
-    }).controller('msgCtrl', function ($scope, $rootScope) {
+    }).controller('sendMsgCtrl', function ($scope, $rootScope) {
         var original;
         original = angular.copy($scope.msg);
 
@@ -109,41 +73,17 @@ angular.module('chatWithSerialApp')
             return $scope.publish_form.$valid && !angular.equals($scope.msg, original);
         };
 
-        function toHex(str) {
-            var hex = '';
-            for (var i = 0; i < str.length; i++) {
-                hex += '' + str.charCodeAt(i).toString(16);
-            }
-            return hex;
-        }
-
         $scope.msgs = []
 
-        var msgArrived = function (msg) {
-            var content = "reply of msg"
-            $scope.partner = msg.replyTopic();
-            $scope.lastmsg = msg
-            var a = {"content_type": "received", "msg": msg.body(), "time": new Date()}
-            $scope.$apply(function () {
-                $scope.msgs.push(a)
-                console.log($scope.msgs)
-            })
-        }
-
         var replyHandler = function (msg) {
-            console.log("reply of msg arrived")
-            msgArrived(msg)
+            $rootScope.$broadcast('replyArrived', msg)
         }
 
         var resultHandler = function (obj) {
-            console.log(obj)
-            console.log("Message published.")
             var json = JSON.parse(obj.payloadString);
             $scope.partner = json.topic;
-            var a = {"content_type": "sent", "msg": json.body, "time": new Date()}
-            $scope.$apply(function () {
-                $scope.msgs.push(a)
-            })
+            var msg = {"content_type": "sent", "msg": json.body, "time": new Date()}
+            $rootScope.$broadcast('msgPublished', msg)
         }
 
         $scope.send = function (msg) {
@@ -154,20 +94,42 @@ angular.module('chatWithSerialApp')
                 alert("InstaMsg socket is not connected.")
             }
         }
+    }).controller('msgCtrl', function ($scope, $rootScope) {
+        $scope.msgs = []
+
+        $rootScope.$on("msgPublished", function (event, msg) {
+            $scope.msgs.push(msg)
+        })
+
+        var msgArrived = function (msg) {
+            var content = "reply of msg"
+            $scope.partner = msg.replyTopic();
+            $scope.lastmsg = msg
+            var a = {"content_type": "received", "msg": msg.body(), "time": new Date()}
+            $scope.$apply(function () {
+                $scope.msgs.push(a)
+            })
+        }
+        $rootScope.$on("replyArrived", function (event, msg) {
+            msgArrived(msg)
+        })
 
         var resulthandler = function (msg) {
-            console.log("reply of msg deliverd")
+//            console.log("reply of msg deliverd")
         }
 
         $rootScope.$on("msgArrived", function (event, msg) {
             msgArrived(msg)
         })
 
+        var replyHandler = function (msg) {
+            msgArrived( msg)
+        }
         $scope.msgReply = function (content) {
             var a = {"content_type": "sent", "msg": content, "time": new Date() }
             $scope.msgs.push(a)
             $scope.data = ''
-            $rootScope.instaMsg.reply(content, $scope.lastmsg, 0, replyHandler, resulthandler, 100)
+            $rootScope.instaMsg.send($scope.partner, content, 1, replyHandler, resulthandler, 100)
         };
 
         $rootScope.$on('disConnected', function () {

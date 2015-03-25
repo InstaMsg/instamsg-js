@@ -24,10 +24,6 @@ angular
         templateUrl: 'views/main.html',
         controller: 'connectCtrl'
       })
-      .when('/about', {
-        templateUrl: 'views/about.html',
-        controller: 'AboutCtrl'
-      })
       .otherwise({
         redirectTo: '/'
       });

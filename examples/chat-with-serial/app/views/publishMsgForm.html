@@ -1,5 +1,6 @@
-
-<form name="publish_form" class="form-validation" data-ng-controller ="msgCtrl">
+<div class="col-md-6" data-ng-hide ='partner' data-ng-controller="sendMsgCtrl">
+<button type="button" class="btn btn-primary btn-block" >Chat</button>
+<form name="publish_form" class="form-validation jumbotron" >
     <div class="form-group">
         <label class="sr-only" for="topic">Client Id</label>
         <input type="text" class="form-control" required placeholder="Client Id" data-ng-model="msg.topic">
@@ -14,3 +15,4 @@
     </div>
     <button type="submit" class="btn btn-primary btn-lg btn-block" data-ng-disabled="!canSubmit()"  data-ng-click="send(msg)">Send</button>
 </form>
+</div>
