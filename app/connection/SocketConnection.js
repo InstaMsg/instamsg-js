@@ -9,7 +9,7 @@ instamsg.SocketConnection.connection = function (onOpenHandler, onMsgHandler, on
     options = options || {};
     var self = this;
 
-    instamsg.SocketConnection.host = 'localhost';
+    instamsg.SocketConnection.host = 'platform.instamsg.io';
     instamsg.SocketConnection.httpPort = 11883;
     instamsg.SocketConnection.httpsPort = 18883;
     instamsg.SocketConnection.port = options.enableSsl ? self.httpsPort : self.httpPort;
@@ -116,6 +116,10 @@ instamsg.SocketConnection.connection = function (onOpenHandler, onMsgHandler, on
         onFailure: onFailure,
         mqttVersion: 3
     }
-    instamsg.SocketConnection.client.connect(Options);
+
+    instamsg.SocketConnection.connect =function(){
+        delete Options["mqttVersionExplicit"]
+        instamsg.SocketConnection.client.connect(Options);
+    }
     return instamsg.SocketConnection;
 }

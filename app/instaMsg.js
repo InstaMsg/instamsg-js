@@ -22,10 +22,14 @@ instamsg.InstaMsg = function (clientId, authKey, connectHandler, disConnectHandl
     options.clientId = clientId.substring(0, 23);
     options.userName = clientId.substring(24, 36);
     options.password = authKey;
+    var logLevel = options.logLevel || false
     instamsg.version = 'beta';
     instamsg.handlersMap = {}
     instamsg.replyHandlerMap = {}
     var filesTopic = "instamsg/clients/" + clientId + "/files";
+    var enableServerLoggingTopic = clientId + "/enableServerLogging";
+    var serverLogsTopic = "";
+    var logToServer = true
     var sendMsgReplyTopic = clientId;
 
     instamsg.fileHandlers = [];
@@ -36,8 +40,19 @@ instamsg.InstaMsg = function (clientId, authKey, connectHandler, disConnectHandl
         if (topic === null || topic === undefined) {
             throw new Error("Invalid topic");
         }
-        console.log("message Arrived : "+msg.payloadString);
+        if (logLevel) {
+            console.log("message Arrived : " + msg.payloadString);
+        }
         switch (topic) {
+            case enableServerLoggingTopic:
+                logToServer = true;
+                var id = msg.payloadString.split("-")
+                if (id.length != 5) {
+                    throw new Error("Invalid CLient id " + msg.payloadString);
+                } else {
+                    serverLogsTopic = "instamsg/" + msg.payloadString + "/logs";
+                }
+                break;
             case filesTopic:
                 try {
                     var json = JSON.parse(msg.payloadString);
@@ -49,12 +64,14 @@ instamsg.InstaMsg = function (clientId, authKey, connectHandler, disConnectHandl
                     }
                 }
                 catch (e) {
+                    if (logLevel) {
+                        console.log(e);
+                    }
                 }
                 break;
             case sendMsgReplyTopic:
                 try {
                     var json = JSON.parse(msg.payloadString);
-                    console.log(json)
                     var messageId = json.message_id;
                     var responseId = json.response_id;
                     if (responseId) {
@@ -77,6 +94,7 @@ instamsg.InstaMsg = function (clientId, authKey, connectHandler, disConnectHandl
                 break;
             default:
                 try {
+
                     if (instamsg.handlersMap[topic]) {
                         instamsg.handlersMap[topic](new instamsg.Message(msg.payloadString))
                     } else {
@@ -84,20 +102,62 @@ instamsg.InstaMsg = function (clientId, authKey, connectHandler, disConnectHandl
                     }
                 }
                 catch (e) {
+                    if (logLevel) {
+                        console.log(e);
+                    }
                 }
                 break;
         }
     };
 
-    var connection = instamsg.ConnectionFactory(connectHandler, onMessageArrived, disConnectHandler, options);
-
+    var netError = false
+    var closeHandler = function (object) {
+        try {
+            if (object.hasOwnProperty('errorCode')) {
+                netError = true
+                connection.connect()
+            } else {
+                disConnectHandler(object)
+            }
+        } catch (e) {
+            if (logToServer) console.log(e)
+        }
+    }
+    var i = 1
+    var onOpenHandler = function (obj) {
+        i = i + 1
+        if (i > 10)  i = 0
+        if (netError) {
+            if (logToServer) console.log("Disconnected, Trying to reconnect.")
+            setTimeout(function () {
+                connection.connect()
+            }, i * 10000);
+        } else {
+            connectHandler(obj)
+        }
+    }
+    var connection = instamsg.ConnectionFactory(onOpenHandler, onMessageArrived, closeHandler, options);
+    connection.connect()
     instamsg.close = function () {
         connection.close();
     };
 
+    var publishServerLogs = function (message) {
+        var id = UUIDjs.create(4).toString()
+        connection.publish(id, serverLogsTopic, message, 0, 0, onPublish, 100);
+    };
+
     var onPublish = function (msg) {
-        if (instamsg.resultHandler[msg.id]) {
-            instamsg.resultHandler[msg.id](instamsg.Result.init(msg, true))
+        msg.payload = msg._getPayloadString()
+        if (msg._getDestinationName() != serverLogsTopic) {
+            if (logToServer)  publishServerLogs("message published : " + JSON.stringify(msg))
+            if (logLevel) {
+                console.log("message published : " + JSON.stringify(msg));
+            }
+            if (instamsg.resultHandler[msg.id]) {
+                instamsg.resultHandler[msg.id](instamsg.Result.init(msg, true))
+            }
+            delete instamsg.resultHandler[msg.id];
         }
     }
 
@@ -109,12 +169,15 @@ instamsg.InstaMsg = function (clientId, authKey, connectHandler, disConnectHandl
 
     instamsg.subscribe = function (topic, qos, msgHandler, resultHandler, timeout) {
         if (topic.length < 1) {
-            console.log("Topic cannot be empty");
+            if (logToServer)  publishServerLogs("Topic cannot be empty")
+            if (logLevel) console.log("Topic cannot be empty");
+
             throw new Error("Topic cannot be empty ");
         }
         if (instamsg.handlersMap[topic] !== undefined) {
-            console.log('You are already subscribed to ' + topic);
-            throw new Error('You are already subscribed to ' + topic);
+            if (logToServer)  publishServerLogs("Topic cannot be empty")
+            if (logLevel)  console.log('You are already subscribed to ' + topic);
+
         }
         var subscriptionobj = {};
         subscriptionobj.topic = topic;
@@ -125,34 +188,49 @@ instamsg.InstaMsg = function (clientId, authKey, connectHandler, disConnectHandl
 
     var onSubscribeSuccess = function (subscriptionobj) {
         instamsg.handlersMap[subscriptionobj.invocationContext.topic] = subscriptionobj.invocationContext.msgHandler;
-        console.log(instamsg.handlersMap)
         var result = "Client Subscribe to " + subscriptionobj.invocationContext.topic
+        if (logToServer)  publishServerLogs(result)
+        if (logLevel) {
+            console.log(result);
+        }
         subscriptionobj.invocationContext.resultHandler(instamsg.Result.init(result, true))
     }
 
     var onSubscribeFailure = function (subscriptionobj) {
-        console.log("unable to suscribe to " + subscriptionobj.invocationContext.topic)
         var result = "Client unable to Subscribe to " + subscriptionobj.invocationContext.topic
+        if (logToServer)  publishServerLogs(result)
+        if (logLevel) {
+            console.log(result);
+        }
         subscriptionobj.invocationContext.resultHandler(instamsg.Result.init(subscriptionobj, false))
     }
 
     instamsg.unsubscribe = function (topic, msgHandler) {
         if (instamsg.handlersMap[topic] === undefined) {
-            console.log('You are not subscribed to this topic');
-            throw new Error('You are not subscribed to this topic');
+            if (logToServer)  publishServerLogs('You are not subscribed to ' + topic)
+            if (logLevel) {
+                console.log('You are not subscribed to ' + topic);
+            }
         }
         connection.unsubscribe(topic, {topic: topic, resultHandler: msgHandler}, onUnsubscribeSuccess, onUnsubscribeFailure)
     };
 
     var onUnsubscribeSuccess = function (object) {
-        console.log("unsubscribed to " + object.invocationContext.topic)
         delete instamsg.handlersMap[object.invocationContext.topic];
         var result = "Client unsubscribe from " + object.invocationContext.topic
+        if (logToServer)  publishServerLogs(result)
+        if (logLevel) {
+            console.log(result);
+        }
         object.invocationContext.resultHandler(instamsg.Result.init(result, true))
     }
 
     var onUnsubscribeFailure = function (object) {
-        console.log("Not able to unsubscribe to " + object.invocationContext.topic)
+        var result = "Not able to unsubscribe to " + object.invocationContext.topic
+        if (logToServer)  publishServerLogs(result)
+        if (logLevel) {
+            console.log(result)
+        }
         object.invocationContext.resultHandler(instamsg.Result.init(object, false))
     }
 
@@ -165,6 +243,10 @@ instamsg.InstaMsg = function (clientId, authKey, connectHandler, disConnectHandl
             reply_to: sendMsgReplyTopic,
             body: msg,
             status: 1
+        }
+        if (logToServer)  publishServerLogs("sending one to one message " + JSON.stringify(message))
+        if (logLevel) {
+            console.log("sending one to one message " + JSON.stringify(message));
         }
         connection.send(clientId, message, qos, timeout);
     };
@@ -186,7 +268,7 @@ instamsg.InstaMsg = function (clientId, authKey, connectHandler, disConnectHandl
 
     };
 
-    instamsg.reply = function (content, msg,qos, replyHandler,resulthandler, timeout) {
+    instamsg.reply = function (content, msg, qos, replyHandler, resulthandler, timeout) {
         if (!instamsg.replyHandlerMap[msg.id()]) {
             instamsg.replyHandlerMap[msg.id()] = replyHandler;
         }
@@ -198,6 +280,10 @@ instamsg.InstaMsg = function (clientId, authKey, connectHandler, disConnectHandl
             body: content,
             status: 1
         }
+        if (logLevel) {
+            console.log("sending reply message " + JSON.stringify(message));
+        }
+        if (logToServer)  publishServerLogs("sending reply message " + JSON.stringify(message))
         connection.send(msg.replyTopic(), message, qos, resulthandler, timeout);
     };
     return instamsg;
