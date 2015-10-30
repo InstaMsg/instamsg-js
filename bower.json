@@ -19,7 +19,7 @@
     "uuid-js": "0.7.4",
     "bower-mqttws": "1.0.0",
     "console.js": "1.0.2",
-    "kurento-utils": "~6.1.0",
+    "kurento-utils": "6.1.0",
     "sockjs": "0.3.4"
   }
 }
