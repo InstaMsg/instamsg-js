@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "homepage": "https://github.com/InstaMsg/instamsg-js",
   "authors": [
-    "gsachan <gsachan@sensegrow.com>"
+    "gsachan <gsachan@sensegrow.com>",
+    "dk <deepak.agrawal@sensegrow.com>"
   ],
   "license": "MIT",
   "ignore": [
@@ -12,5 +13,13 @@
     "bower_components",
     "test",
     "tests"
-  ]
+  ],
+  "dependencies": {
+    "webrtc-adapter": "0.2.3",
+    "uuid-js": "0.7.4",
+    "bower-mqttws": "1.0.0",
+    "console.js": "1.0.2",
+    "kurento-utils": "~6.1.0",
+    "sockjs": "0.3.4"
+  }
 }

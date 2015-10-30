@@ -18,7 +18,7 @@ var oneToOneMessageHandler = function(msg){
     msg.reply("This is a reply to a one to one message.")
 }
 
-var instaMsg=instamsg.InstaMsg("client_id","client_secret",connectHandler, disConnectHandler, oneToOneMessageHandler)
+var instaMsg=instamsg.InstaMsg("10065e50-5522-11e5-a98e-a41f726775dd","CLIENT2",connectHandler, disConnectHandler, oneToOneMessageHandler,{"enableSsl":false})
 
 var publishMsgResultHandler = function(msg){
     console.log("oneToOne Message Reply Handler.")
