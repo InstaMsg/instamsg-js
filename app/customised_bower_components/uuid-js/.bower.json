@@ -1,0 +1,14 @@
+{
+  "name": "uuid-js",
+  "homepage": "https://github.com/aurigadl/uuid-js",
+  "version": "0.7.4",
+  "_release": "0.7.4",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.7.4",
+    "commit": "a475b94845c4c2f82e5d3566de6e53730b68c994"
+  },
+  "_source": "git://github.com/aurigadl/uuid-js.git",
+  "_target": "0.7.4",
+  "_originalSource": "uuid-js"
+}

@@ -100,7 +100,7 @@
           imagesDir: "<%= yeoman.app %>/styles/ui/images/",
           javascriptsDir: "<%= yeoman.app %>/scripts",
           fontsDir: "<%= yeoman.app %>/fonts",
-          importPath: "<%= yeoman.app %>/bower_components",
+          importPath: "<%= yeoman.app %>/customised_bower_components",
           httpImagesPath: "styles/ui/images/",
           httpGeneratedImagesPath: "styles/ui/images/",
           httpFontsPath: "fonts",
@@ -227,8 +227,8 @@
           separator: grunt.util.linefeed + ';' + grunt.util.linefeed
         },
         dist: {
-          src: ["<%= yeoman.dist %>/bower_components/angular/angular.min.js"],
-          dest: "<%= yeoman.dist %>/scripts/vendor.js"
+          src: [],
+          dest: "<%= yeoman.dist %>/instamsg.js"
         }
       },
       uglify: {
@@ -237,7 +237,7 @@
         },
         dist: {
           files: {
-            "<%= yeoman.dist %>/scripts/app.js": [".tmp/**/*.js"]
+            "<%= yeoman.dist %>/instamsg.min.js": ["<%= yeoman.dist %>/instamsg.js"]
           }
         }
       }

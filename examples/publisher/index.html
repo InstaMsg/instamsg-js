@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+	<head lang="en">
+		<meta charset="UTF-8">
+		<title>InstaMsg Publisher App</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+		<script src="../../dist/instamsg.js"></script>
+		<script src="publisher.js"></script>
+	</head>
+	<body>
+		<div class="container" >
+			<div class="jumbotron">
+    			<h1>InstaMsg Publisher Example</h1>
+    			<p></p> 
+  			</div>
+			<div class="row" id="connectForm">
+				<div class="col-sm-4">
+					Connecting...
+				</div>
+			</div>
+			<div class="hide" id="connectExample">
+				<div class="col-xs-12">
+					<label>Message Send</label>
+					<table class="table table-stript" id="send">
+						<thead>
+							<tr>
+								<th>Topic</th>
+								<th>Message</th>
+								<th>Status</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

@@ -2,6 +2,7 @@
  * Created by gsachan on 29/12/14.
  */
 
+
 var instamsg = instamsg || {};
 
 instamsg.InstaMsg = function (clientId, authKey, connectHandler, disConnectHandler, oneToOneMessageHandler, options) {
@@ -29,7 +30,7 @@ instamsg.InstaMsg = function (clientId, authKey, connectHandler, disConnectHandl
     var filesTopic = "instamsg/clients/" + clientId + "/files";
     var enableServerLoggingTopic = clientId + "/enableServerLogging";
     var serverLogsTopic = "";
-    var logToServer = true
+    var logToServer = false
     var sendMsgReplyTopic = clientId;
 
     instamsg.fileHandlers = [];
@@ -43,6 +44,7 @@ instamsg.InstaMsg = function (clientId, authKey, connectHandler, disConnectHandl
         if (logLevel) {
             console.log("message Arrived : " + msg.payloadString);
         }
+        console.log("topic is : " + topic);
         switch (topic) {
             case enableServerLoggingTopic:
                 logToServer = true;
@@ -81,6 +83,7 @@ instamsg.InstaMsg = function (clientId, authKey, connectHandler, disConnectHandl
                         }
                     } else {
                         if (oneToOneMessageHandler) {
+                            
                             var message = new instamsg.Message(json.body, {id: json.message_id, topic: json.topic, replyTopic: json.reply_to})
                             oneToOneMessageHandler(message)
                         }
@@ -96,14 +99,14 @@ instamsg.InstaMsg = function (clientId, authKey, connectHandler, disConnectHandl
                 try {
 
                     if (instamsg.handlersMap[topic]) {
-                        instamsg.handlersMap[topic](new instamsg.Message(msg.payloadString))
+                        instamsg.handlersMap[topic](new instamsg.Message(msg.payloadString,{topic:topic}))
                     } else {
                         throw new Error("No Handler is register for " + topic);
                     }
                 }
                 catch (e) {
                     if (logLevel) {
-                        console.log(e);
+                        console.log(e.message);
                     }
                 }
                 break;

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+	<head lang="en">
+		<meta charset="UTF-8">
+		<title>InstaMsg Subscriber App</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+		<script src="../../dist/instamsg.js"></script>
+		<script src="subscriber.js"></script>
+	</head>
+	<body>
+		<div class="container" >
+			<div class="jumbotron">
+    			<h1>InstaMsg Subscriber Example</h1>
+    			<p></p> 
+  			</div>
+			<div class="row" id="connectForm">
+				<div class="col-sm-4">
+					Connecting...
+				</div>
+			</div>
+			<div class="hide" id="connectExample">
+				<div class="col-xs-12">
+					<label>Message Recieved</label>
+					<table class="table table-stript" id="recieved">
+						<thead>
+							<tr>
+								<th>Topic</th>
+								<th>Message</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

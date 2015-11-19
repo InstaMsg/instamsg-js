@@ -9,6 +9,7 @@ instamsg.SockjsConnection.connection = function (onOpenHandler, onMsgHandler, on
 
     var self = this;
    var options = options || {};
+    //instamsg.SockjsConnection.host = 'sockjs.instamsg.com';
     instamsg.SockjsConnection.host = 'sockjs.instamsg.com';
     instamsg.SockjsConnection.httpPort = 80;
     instamsg.SockjsConnection.httpsPort = 443;

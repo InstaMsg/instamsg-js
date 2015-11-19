@@ -8,8 +8,8 @@ instamsg.SocketConnection.connection = function (onOpenHandler, onMsgHandler, on
 
     options = options || {};
     var self = this;
-
     instamsg.SocketConnection.host = 'platform.instamsg.io';
+    //instamsg.SocketConnection.host = 'localhost';
     instamsg.SocketConnection.httpPort = 11883;
     instamsg.SocketConnection.httpsPort = 18883;
     instamsg.SocketConnection.port = options.enableSsl ? self.httpsPort : self.httpPort;
@@ -37,13 +37,17 @@ instamsg.SocketConnection.connection = function (onOpenHandler, onMsgHandler, on
     }
 
     instamsg.SocketConnection.send = function (clientId,msg,qos,resultHandler, timeout) {
+       console.log('Instamsg socket connection send.');
         if (!instamsg.SocketConnection.client.isConnected()) {
             console.log('InstaMsg socket is not connected.');
             return false;
         }
         var payload =JSON.stringify(msg)
         var message =new Paho.MQTT.Message(payload)
-        message.qos =qos                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ;
+        if(qos == undefined){
+            qos = 1
+        }
+        message.qos =qos    
         message.retained = true;
         message.destinationName=clientId;
         console.log("sending " + payload)

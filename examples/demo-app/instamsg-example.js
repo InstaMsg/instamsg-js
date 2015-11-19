@@ -4,6 +4,17 @@
 
 var connectHandler = function(obj,b){
     console.log("Client connected to instaMsg.");
+    setInterval(send, 3000);   
+    //recieve();
+}
+
+var send = function(){
+    instamsg.publish("pub1", "test-message",0,1,publishMsgResultHandler,100);
+}
+
+
+var recieve = function(){
+    instaMsg.subscribe("pub1",1,msgHandler,onSubscribeResultHandler,60);
 }
 
 var disConnectHandler = function(){
@@ -13,19 +24,17 @@ var disConnectHandler = function(){
 var oneToOneMessageReplyHandler = function(msg){
     console.log("oneToOne Message Reply Handler.")
 }
+
 var oneToOneMessageHandler = function(msg){
     console.log("one to one message received.")
     msg.reply("This is a reply to a one to one message.")
 }
 
-var instaMsg=instamsg.InstaMsg("10065e50-5522-11e5-a98e-a41f726775dd","CLIENT2",connectHandler, disConnectHandler, oneToOneMessageHandler,{"enableSsl":false})
+var instaMsg=instamsg.InstaMsg("0af3eaf0-61c4-11e5-b2a8-a41f726775dd","Client1",connectHandler, disConnectHandler, oneToOneMessageHandler,{"enableSsl":true})
 
 var publishMsgResultHandler = function(msg){
     console.log("oneToOne Message Reply Handler.")
 }
-
-instamsg.publish("topic", "test-message",0,1,publishMsgResultHandler,100)
-
 
 var onSubscribeResultHandler = function (result) {
     if(result.failed()) {
@@ -40,8 +49,6 @@ var msgHandler = function(msg){
 }
 
 
-instaMsg.subscribe("topic",1,msgHandler,onSubscribeResultHandler,60)
-
 var onUnsubscribeResultHandler = function(result){
     if(result.failed()) {
         console.log("unable to unsubscribe " )
@@ -50,6 +57,6 @@ var onUnsubscribeResultHandler = function(result){
     }
 }
 
-instaMsg.unsubscribe("topic",onUnsubscribeResultHandler)
-
+/*instaMsg.unsubscribe("topic",onUnsubscribeResultHandler)
 instaMsg.close()
+*/
