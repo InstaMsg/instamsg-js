@@ -1,6 +1,6 @@
-var clientId = '2c5a3e40-44b1-11e5-837e-bc764e102b63';
-var clientAuthToken = 'abcd1234%';
-var topic = 'pubtopics';
+var clientId = 'clientId';
+var clientAuthToken = 'clientAuthToken';
+var topic = 'topic';
 
 var options = {
 	enableSsl : true

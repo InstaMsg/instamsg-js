@@ -4,13 +4,12 @@
 
 var connectHandler = function(obj,b){
     console.log("Client connected to instaMsg.");
-    send();
     //setInterval(send, 3000);   
     //recieve();
 }
 
 var send = function(){
-    instamsg.send("recievedId", "test-message", 0, oneToOneMessageReplyHandler, 100);
+    instamsg.send("recievedid", "test-message", 0, oneToOneMessageReplyHandler, 100);
 }
 
 
@@ -29,10 +28,10 @@ var oneToOneMessageReplyHandler = function(msg){
 var oneToOneMessageHandler = function(msg){
     console.log(msg);
     console.log("one to one message received.")
-    msg.reply("This is a reply to a one to one message.")
+    msg.reply("This is a reply to a one to one message.", 0, oneToOneMessageReplyHandler)
 }
 
-var instaMsg=instamsg.InstaMsg("clientId","authToken",connectHandler, disConnectHandler, oneToOneMessageHandler,{"enableSsl":true})
+var instaMsg=instamsg.InstaMsg("ClientId","authtoken",connectHandler, disConnectHandler, oneToOneMessageHandler,{"enableSsl":true})
 
 var publishMsgResultHandler = function(msg){
     console.log("publish Message Reply Handler.")

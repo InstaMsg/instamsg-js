@@ -251,7 +251,7 @@ instamsg.InstaMsg = function (clientId, authKey, connectHandler, disConnectHandl
         if (logLevel) {
             console.log("sending one to one message " + JSON.stringify(message));
         }
-        connection.send(clientId, message, qos, timeout);
+        connection.send(clientId, message, qos, replyHandler, timeout);
     };
 
     instamsg.setFileReceiveHander = function (resultHandler, timeout) {
@@ -271,7 +271,7 @@ instamsg.InstaMsg = function (clientId, authKey, connectHandler, disConnectHandl
 
     };
 
-    instamsg.reply = function (content, msg, qos, replyHandler, resulthandler, timeout) {
+    instamsg.reply = function (content, msg, qos, replyHandler, timeout) {
         if (!instamsg.replyHandlerMap[msg.id()]) {
             instamsg.replyHandlerMap[msg.id()] = replyHandler;
         }
@@ -287,7 +287,7 @@ instamsg.InstaMsg = function (clientId, authKey, connectHandler, disConnectHandl
             console.log("sending reply message " + JSON.stringify(message));
         }
         if (logToServer)  publishServerLogs("sending reply message " + JSON.stringify(message))
-        connection.send(msg.replyTopic(), message, qos, resulthandler, timeout);
+        connection.send(msg.replyTopic(), message, qos, replyHandler, timeout);
     };
     return instamsg;
 }

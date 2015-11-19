@@ -1,6 +1,6 @@
-var clientId = '00125580-e29a-11e4-ace1-bc764e102b63';
-var clientAuthToken = 'password';
-var topic = 'pubtopics';
+var clientId = 'clientId';
+var clientAuthToken = 'clientAuthToken';
+var topic = 'topic';
 var message = 'message';
 
 var options = {
