@@ -1,7 +1,7 @@
 var clientId = 'to_be_entered';
 var clientAuthToken = 'to_be_entered';
 var topic = 'to_be_entered';
-var message = 'to_be_entered';
+var message = 'Test';
 
 var options = {
 	enableSsl : true
