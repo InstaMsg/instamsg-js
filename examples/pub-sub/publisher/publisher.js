@@ -1,7 +1,7 @@
-var clientId = 'clientId';
-var clientAuthToken = 'clientAuthToken';
-var topic = 'topic';
-var message = 'message';
+var clientId = 'to_be_entered';
+var clientAuthToken = 'to_be_entered';
+var topic = 'to_be_entered';
+var message = 'to_be_entered';
 
 var options = {
 	enableSsl : true
@@ -27,9 +27,7 @@ var publish = function(){
 };
 
 var publishMsgResultHandler = function(msg){
-	console.log(msg);
 	var message = msg.result();
-
     var table = document.getElementById("send");
     var row = table.insertRow(1);
     var cell1 = row.insertCell(0);

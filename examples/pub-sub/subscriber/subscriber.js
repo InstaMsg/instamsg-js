@@ -1,6 +1,6 @@
-var clientId = 'clientId';
-var clientAuthToken = 'clientAuthToken';
-var topic = 'topic';
+var clientId = 'to_be_entered';
+var clientAuthToken = 'to_be_entered';
+var topic = 'to_be_entered';
 
 var options = {
 	enableSsl : true
