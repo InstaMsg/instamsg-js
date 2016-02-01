@@ -1232,7 +1232,6 @@ Paho.MQTT = (function (global) {
         wsurl = uriParts.join(":");
     }
     this.connected = false;
-    console.log(this.connectOptions);
     if (this.connectOptions.mqttVersion < 4) {
       this.socket = new WebSocket(wsurl, []);
     } else {
