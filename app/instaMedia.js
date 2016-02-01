@@ -93,7 +93,8 @@ instamsg.InstaMedia = function (from, authKey, connectHandler){
 				console.log("InstaMsg not able to connect.");
 			} else {
 				console.log("InstaMsg socket connected.");
-				instaMsg.subscribe(mediaReplyTopic, 1, handler, onSubscribeSuccess, 60)
+				instamsg.handlersMap[mediaReplyTopic] = handler;
+				//instaMsg.subscribe(mediaReplyTopic, 1, handler, onSubscribeSuccess, 60)
 			}
 		}
 	}
@@ -147,7 +148,8 @@ instamsg.InstaMedia = function (from, authKey, connectHandler){
 		console.log(from);
 		mediaStreamsTopic = "instamsg/clients/" + from + "/mediastreams";
 		mediaSendTopic = "instamsg/clients/" + from + "/media";
-		instaMsg.subscribe(mediaStreamsTopic, 1, streamHandler, onSubscribeSuccess, 60)
+		instamsg.handlersMap[mediaStreamsTopic] = handler;
+		//instaMsg.subscribe(mediaStreamsTopic, 1, streamHandler, onSubscribeSuccess, 60)
 		
 		if (!webRtcPeer) {
 			showSpinner(video);

@@ -1,2 +1,4 @@
 node_modules
-//bower_components
+bower_components
+examples/Instamsg-Chat/.sass-cache
+examples/Instamsg-Chat/.tmp

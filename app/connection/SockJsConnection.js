@@ -8,9 +8,8 @@ instamsg.SockjsConnection = instamsg.SockjsConnection || {}
 instamsg.SockjsConnection.connection = function (onOpenHandler, onMsgHandler, onCloseHandler,options) {
 
     var self = this;
-   var options = options || {};
-    //instamsg.SockjsConnection.host = 'sockjs.instamsg.com';
-    instamsg.SockjsConnection.host = 'sockjs.instamsg.com';
+    var options = options || {};
+    instamsg.SockjsConnection.host = serverName;
     instamsg.SockjsConnection.httpPort = 80;
     instamsg.SockjsConnection.httpsPort = 443;
     instamsg.SockjsConnection.path = "/instamsg";
@@ -46,7 +45,7 @@ instamsg.SockjsConnection.connection = function (onOpenHandler, onMsgHandler, on
 
     instamsg.SockjsConnection.close = function () {
         sock.close();
-        onCloseHandler()
+        onCloseHandler();
     }
 
 }

@@ -3,7 +3,7 @@
   "use strict";
   var LIVERELOAD_PORT, lrSnippet, mountFolder;
 
-  LIVERELOAD_PORT = 35728;
+  LIVERELOAD_PORT = 35790;
 
   lrSnippet = require("connect-livereload")({
     port: LIVERELOAD_PORT
@@ -39,12 +39,17 @@
           options: {
             livereload: LIVERELOAD_PORT
           },
-          files: ["<%= yeoman.app %>/index.html", "<%= yeoman.app %>/views/**/*.html", "<%= yeoman.app %>/styles/**/*.scss", ".tmp/styles/**/*.css", "{.tmp,<%= yeoman.app %>}/scripts/**/*.js", "<%= yeoman.app %>/images/**/*.{png,jpg,jpeg,gif,webp,svg}"]
+          files: [  "<%= yeoman.app %>/index.html", 
+                    "<%= yeoman.app %>/views/**/*.html", 
+                    "<%= yeoman.app %>/styles/**/*.scss", 
+                    ".tmp/styles/**/*.css", 
+                    "{.tmp,<%= yeoman.app %>}/scripts/**/*.js", 
+                    "<%= yeoman.app %>/images/**/*.{png,jpg,jpeg,gif,webp,svg}"]
         }
       },
       connect: {
         options: {
-          port: 8080,
+          port: 8090,
           hostname: "localhost"
         },
         livereload: {
@@ -72,7 +77,7 @@
       open: {
         server: {
           url: "http://localhost:<%= connect.options.port %>",
-          app: 'firefox'
+          app: 'google-chrome'
         }
       },
       clean: {
@@ -197,7 +202,19 @@
               dot: true,
               cwd: "<%= yeoman.app %>",
               dest: "<%= yeoman.dist %>",
-              src: ["favicon.ico", "bower_components/font-awesome/css/*", "bower_components/font-awesome/fonts/*", "bower_components/weather-icons/css/*", "bower_components/weather-icons/font/*", "fonts/**/*", "i18n/**/*", "images/**/*", "styles/bootstrap/**/*", "styles/fonts/**/*", "styles/img/**/*", "styles/ui/images/**/*", "views/**/*"]
+              src: ["favicon.ico", 
+                    "bower_components/font-awesome/css/*", 
+                    "bower_components/font-awesome/fonts/*", 
+                    "bower_components/weather-icons/css/*", 
+                    "bower_components/weather-icons/font/*", 
+                    "fonts/**/*", 
+                    "i18n/**/*", 
+                    "images/**/*", 
+                    "styles/bootstrap/**/*", 
+                    "styles/fonts/**/*", 
+                    "styles/img/**/*", 
+                    "styles/ui/images/**/*", 
+                    "views/**/*"]
             }, {
               expand: true,
               cwd: ".tmp",
@@ -242,13 +259,16 @@
         }
       }
     });
+    
     grunt.registerTask("server", function(target) {
-      if (target === "dist") {
-        return grunt.task.run(["build", "open", "connect:dist:keepalive"]);
-      }
-      return grunt.task.run(["clean:server", "concurrent:server", "connect:livereload", "open", "watch"]);
+        if (target === "dist") {
+            return grunt.task.run(["build", "open", "connect:dist:keepalive"]);
+        }
+        return grunt.task.run(["clean:server", "concurrent:server", "connect:livereload", "open", "watch"]);
     });
+
     grunt.registerTask("build", ["clean:dist", "useminPrepare", "concurrent:dist", "copy:dist", "concat", "uglify", "usemin"]);
+    
     return grunt.registerTask("default", ["server"]);
   };
 

@@ -2,14 +2,20 @@
  * Created by gsachan on 30/12/14.
  */
 
+var serverName = window.location.host;
+var tempIndex = serverName.indexOf(':');
+if(tempIndex != -1){
+    serverName = serverName.substring(0, tempIndex);
+}
+
+
 var instamsg = instamsg || {};
 instamsg.SocketConnection = instamsg.SocketConnection || {}
 instamsg.SocketConnection.connection = function (onOpenHandler, onMsgHandler, onCloseHandler, options) {
 
     options = options || {};
     var self = this;
-    instamsg.SocketConnection.host = 'platform.instamsg.io';
-    //instamsg.SocketConnection.host = 'localhost';
+    instamsg.SocketConnection.host = serverName;
     instamsg.SocketConnection.httpPort = 11883;
     instamsg.SocketConnection.httpsPort = 18883;
     instamsg.SocketConnection.port = options.enableSsl ? self.httpsPort : self.httpPort;
