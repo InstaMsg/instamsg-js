@@ -7,6 +7,7 @@ var tempIndex = serverName.indexOf(':');
 if(tempIndex != -1){
     serverName = serverName.substring(0, tempIndex);
 }
+serverName = "device.instamsg.io";
 
 
 var instamsg = instamsg || {};
@@ -16,8 +17,8 @@ instamsg.SocketConnection.connection = function (onOpenHandler, onMsgHandler, on
     options = options || {};
     var self = this;
     instamsg.SocketConnection.host = serverName;
-    instamsg.SocketConnection.httpPort = 11883;
-    instamsg.SocketConnection.httpsPort = 18883;
+    instamsg.SocketConnection.httpPort = 80;
+    instamsg.SocketConnection.httpsPort = 443;
     instamsg.SocketConnection.port = options.enableSsl ? self.httpsPort : self.httpPort;
     instamsg.SocketConnection.client = new Paho.MQTT.Client(instamsg.SocketConnection.host, Number(instamsg.SocketConnection.port), options.clientId);
 
