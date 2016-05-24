@@ -1,6 +1,6 @@
-var clientId = 'to_be_entered';
-var clientAuthToken = 'to_be_entered';
-var topic = 'to_be_entered';
+var clientId = '39e615c0-f668-11e5-95f5-bc764e102b63';
+var clientAuthToken = 'cc61f02d228348de8f705287e6a6d0aa';
+var topic = 'listener_topic';
 var message = 'Test';
 
 var options = {
