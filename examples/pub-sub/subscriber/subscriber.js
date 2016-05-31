@@ -3,7 +3,7 @@ var clientAuthToken = '0bd3a1c7817a4a1da772a89fcca48523';
 var topic = 'listener_topic';
 
 var options = {
-	enableSsl : true
+	enableSsl : false
 };
 
 var instaMsg = undefined;
