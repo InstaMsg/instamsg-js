@@ -26,6 +26,17 @@ var publish = function(){
 	instamsg.publish(topic, message+" "+counter++, 0, 1, publishMsgResultHandler, 100);
 };
 
+var publishMessage = function(){
+	var msg = document.getElementById("message-box1").value;
+	console.log(msg);
+	instamsg.publish(topic, msg, 0, 1, pubMsgResultHandler, 100);
+	
+};
+
+var pubMsgResultHandler = function(msg){
+	console.log(msg.result());
+}
+
 var publishMsgResultHandler = function(msg){
 	var message = msg.result();
     var table = document.getElementById("send");
