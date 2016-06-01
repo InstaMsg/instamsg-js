@@ -4,7 +4,7 @@ var topic = 'listener_topic';
 var message = 'Test';
 
 var options = {
-	enableSsl : false
+	enableSsl : true
 };
 
 var instaMsg = undefined;
