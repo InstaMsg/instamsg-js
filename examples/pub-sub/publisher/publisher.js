@@ -3,7 +3,7 @@ var clientAuthToken = 'cc61f02d228348de8f705287e6a6d0aa';
 //var topic = 'listener_topic';
 var topic = 'mark_topic';
 
-var message = 'Test';
+//var message = 'Test';
 
 var options = {
 	enableSsl : true
