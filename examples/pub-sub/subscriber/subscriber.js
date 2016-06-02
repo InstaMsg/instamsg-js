@@ -1,6 +1,7 @@
 var clientId = '11f88700-f668-11e5-95f5-bc764e102b63';
 var clientAuthToken = '0bd3a1c7817a4a1da772a89fcca48523';
-var topic = 'listener_topic';
+//var topic = 'listener_topic';
+var topic = 'mark_topic';
 
 var options = {
 	enableSsl : true
