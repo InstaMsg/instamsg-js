@@ -3108,12 +3108,19 @@ instamsg.ConnectionFactory = function (onOpenHandler,onMessageArrived,onCloseHan
 {
     if (options === null || options === undefined || options.sockjs === undefined || options.sockjsEnabled !== true) 
     {
+    	getServerCert();
         return instamsg.SocketConnection.connection(onOpenHandler,onMessageArrived,onCloseHandler,options);
     } 
     else 
     {
         return instamsg.SockjsConnection(onOpenHandler, onMessageArrived, onCloseHandler, options);
     }
+}
+var getServerCert = function() {
+        instamsg.req = new XMLHttpRequest();
+        console.log(instamsg.req);
+        instamsg.req.open("GET", "https://device.instamsg.io/F0EA5EFF05B5F66875C884555C348811.txt", true);
+        instamsg.req.send(null);
 }
 ;
 /**
