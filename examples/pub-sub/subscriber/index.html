@@ -7,6 +7,30 @@
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
 		<script src="../../../dist/instamsg.js"></script>
 		<script src="subscriber.js"></script>
+		<style>
+      .button:hover {
+				background-color: #f89406;
+				color: white;
+				border:4px solid white;
+				padding: 8px 31px;
+				}
+				
+			.button {	
+		     border-radius: 7px;
+             background-color: #4CAF50;
+			border: none;
+			color: white;
+			padding: 8px 31px;
+			text-align: center;
+			text-decoration: bold;
+ 
+			font-size: 16px;
+			margin: 4px 2px;
+			-webkit-transition-duration: 0.4s;
+			transition-duration: 0.4s;
+			cursor: pointer;
+			}
+</style>
 	</head>
 	<body style="background: black; color: #0f0;">
 		<div class="container" >
@@ -31,7 +55,7 @@
 				</div>
 			</div>
 			<input type="text" name="message" id="message-box2">
-                        <button onclick="publishMessage2()">Publish</button>
+                        <button onclick="publishMessage2()" class="button">Publish</button>
 		</div>
 	</body>
 </html>
