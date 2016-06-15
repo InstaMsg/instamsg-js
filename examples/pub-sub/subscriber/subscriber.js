@@ -8,10 +8,10 @@ var options = {
 	enableSsl : true
 };
 
-var instaMsg = undefined;
+var instaMsg1 = undefined;
 
 var connect = function(){
-	instaMsg = instamsg.InstaMsg(clientId,clientAuthToken,connectHandler, disConnectHandler, oneToOneMessageHandler, options);
+	instaMsg1 = instamsg.InstaMsg(clientId,clientAuthToken,connectHandler, disConnectHandler, oneToOneMessageHandler, options);
 }
 
 var connectHandler = function(a,b){
@@ -23,10 +23,11 @@ var connectHandler = function(a,b){
 };
 
 var subscribe = function(){
-	instaMsg.subscribe(topic, 1, msgHandler, onSubscribeResultHandler, 60);
+	instaMsg1.subscribe(subscribe_topic, 1, msgHandler, onSubscribeResultHandler, 60);
 };
 
 var msgHandler = function(msg){
+	//console.log('msg rec');
     var table = document.getElementById("recieved");
     var row = table.insertRow(1);
     var cell1 = row.insertCell(0);
