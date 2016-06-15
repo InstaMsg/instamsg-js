@@ -1,7 +1,8 @@
 var clientId = '39e615c0-f668-11e5-95f5-bc764e102b63';
 var clientAuthToken = 'cc61f02d228348de8f705287e6a6d0aa';
 //var topic = 'listener_topic';
-var topic = 'mark_topic';
+var subscribe_topic = 'test_topic';
+var publish_topic = 'mark_topic';
 
 //var message = 'Test';
 
@@ -25,7 +26,7 @@ var connectHandler = function(a,b){
 var counter = 1;
 
 var publish = function(){
-	instamsg.publish(topic, message+" "+counter++, 0, 1, publishMsgResultHandler, 100);
+//	instamsg.publish(topic, message+" "+counter++, 0, 1, publishMsgResultHandler, 100);
 };
 
 var publishMessage = function(){
@@ -34,6 +35,30 @@ var publishMessage = function(){
 	instamsg.publish(topic, msg, 0, 1, pubMsgResultHandler, 100);
 	
 };
+
+var subscribeMessage = function(){
+	instaMsg.subscribe(subscribe_topic, 1, msgHandler, onSubscribeResultHandler, 60);
+};
+
+var msgHandler = function(msg){
+	//console.log('msg rec');
+    var table = document.getElementById("recieved");
+    var row = table.insertRow(1);
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+    var cell3 = row.insertCell(2);
+    cell1.innerHTML = msg.topic();
+	cell2.innerHTML = msg.body();
+	cell3.innerHTML = msg.succeeded()?"Send":"Failed";
+}
+
+var onSubscribeResultHandler = function (result) {
+    if(result.failed()) {
+        console.log("unable to subscribe " );
+    } else {
+        console.log("publisher subscribed " );
+    }
+}
 
 var pubMsgResultHandler = function(msg){
 	console.log(msg.result());
