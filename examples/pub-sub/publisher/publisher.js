@@ -3,7 +3,6 @@ var clientAuthToken = 'cc61f02d228348de8f705287e6a6d0aa';
 //var topic = 'listener_topic';
 var subscribe_topic = 'test_topic';
 var publish_topic = 'mark_topic';
-
 //var message = 'Test';
 
 var options = {
@@ -20,20 +19,21 @@ var connectHandler = function(a,b){
 	//alert("Client connected to instaMsg.");
 	document.getElementById('connectForm').setAttribute("class", "hide");
 	document.getElementById('connectExample').setAttribute("class", "row");
-    setInterval(publish, 3000);
+    //setInterval(publish, 3000);
+	subscribeMessage();
 };
 
 var counter = 1;
 
 var publish = function(){
-//	instamsg.publish(topic, message+" "+counter++, 0, 1, publishMsgResultHandler, 100);
+//	instaMsg.publish(topic, message+" "+counter++, 0, 1, publishMsgResultHandler, 100);
 };
 
 var publishMessage = function(){
 	var msg = document.getElementById("message-box1").value;
-	console.log(msg);
-	instamsg.publish(topic, msg, 0, 1, pubMsgResultHandler, 100);
-	
+	console.log(publish_topic);
+	console.log(instamsg.SocketConnection.client.isConnected());
+	instaMsg.publish(publish_topic, msg, 0, 1, pubMsgResultHandler, 100);
 };
 
 var subscribeMessage = function(){
@@ -75,6 +75,7 @@ var publishMsgResultHandler = function(msg){
 	cell2.innerHTML = message.payload;
 	cell3.innerHTML = msg.succeeded()?"Send":"Failed";
 }
+
 
 var disConnectHandler = function(){
 	console.log("Client disconnected.")
