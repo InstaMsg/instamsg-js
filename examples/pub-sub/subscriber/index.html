@@ -15,9 +15,9 @@
 				padding: 8px 31px;
 				}
 				
-			.button {	
-		     border-radius: 7px;
-             background-color: #4CAF50;
+	.button {	
+		         border-radius: 7px;
+                        background-color: #4CAF50;
 			border: none;
 			color: white;
 			padding: 8px 31px;
@@ -29,6 +29,16 @@
 			-webkit-transition-duration: 0.4s;
 			transition-duration: 0.4s;
 			cursor: pointer;
+			}
+	.textbox-style{
+		    background: white;
+                    border: 1px solid #0f0;
+                    border-radius: 5px;
+                    color: #666;
+                    outline: none;
+                    height: 29px;
+                    width: 223px;
+                    margin: 5px;
 			}
 </style>
 	</head>
@@ -55,7 +65,7 @@
 				</div>
 			</div>
 			
-			<input type="text" name="message" id="message-box2">
+			<input class="textbox-style" type="text" name="message" id="message-box2" placeholder="Type message">
                         <button onclick="publishMessage2()" class="button">Publish</button>
 		</div>
 	</body>
